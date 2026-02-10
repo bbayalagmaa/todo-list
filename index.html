@@ -3,186 +3,665 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
+    <title>my todos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #faf7f5;
+            --card: #ffffff;
+            --accent: #c9a4b2;
+            --accent-light: #f0e4ea;
+            --accent-dark: #a87d90;
+            --text: #4a3f47;
+            --text-light: #9b8f95;
+            --border: #ede7ea;
+            --danger: #d4868a;
+            --danger-light: #faf0f0;
+            --green: #8bb89c;
+            --green-light: #eef6f1;
+            --orange: #d4a76a;
+            --orange-light: #fdf5eb;
+            --blue: #7fadc9;
+            --blue-light: #edf4f9;
+            --shadow: 0 1px 8px rgba(74, 63, 71, 0.06);
+            --shadow-hover: 0 4px 16px rgba(74, 63, 71, 0.1);
+            --radius: 14px;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            color: #333;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
+            padding: 32px 16px 80px;
             display: flex;
             justify-content: center;
-            padding: 40px 20px;
         }
 
-        .container {
+        .app {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
         }
 
-        h1 {
+        /* ---- Header ---- */
+        .header {
             text-align: center;
-            margin-bottom: 24px;
-            font-size: 28px;
-            color: #222;
+            margin-bottom: 28px;
         }
 
-        .input-row {
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text);
+        }
+
+        .header .date-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        /* ---- Today Summary ---- */
+        .summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 14px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .summary-card .num {
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .summary-card .label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-card.total .num { color: var(--accent-dark); }
+        .summary-card.done .num { color: var(--green); }
+        .summary-card.due .num { color: var(--orange); }
+
+        /* ---- Add Form ---- */
+        .add-form {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .add-form .row {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
-        .input-row input {
+        .add-form .row:last-child { margin-bottom: 0; }
+
+        .add-form input[type="text"] {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
             outline: none;
             transition: border-color 0.2s;
+            color: var(--text);
+            background: var(--bg);
         }
 
-        .input-row input:focus {
-            border-color: #4a90d9;
+        .add-form input[type="text"]:focus {
+            border-color: var(--accent);
         }
 
-        .input-row button {
-            padding: 12px 20px;
-            background: #4a90d9;
+        .add-form input[type="text"]::placeholder {
+            color: var(--text-light);
+        }
+
+        .add-form select, .add-form input[type="date"] {
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .add-form select:focus, .add-form input[type="date"]:focus {
+            border-color: var(--accent);
+        }
+
+        .add-form select { flex: 1; }
+        .add-form input[type="date"] { flex: 1; }
+
+        .btn-add {
+            padding: 10px 22px;
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
         }
 
-        .input-row button:hover {
-            background: #357abd;
+        .btn-add:hover { background: var(--accent-dark); }
+        .btn-add:active { transform: scale(0.97); }
+
+        /* ---- View Tabs ---- */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            margin-top: 14px;
         }
 
-        .task-list {
-            list-style: none;
+        .tab {
+            padding: 7px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            font-size: 13px;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
         }
+
+        .tab:hover { color: var(--text); background: var(--accent-light); }
+        .tab.active { background: var(--accent); color: white; }
+
+        /* ---- Category Filter ---- */
+        .cat-filters {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .cat-chip {
+            padding: 5px 14px;
+            border: 1.5px solid var(--border);
+            background: var(--card);
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cat-chip:hover { border-color: var(--accent); color: var(--text); }
+        .cat-chip.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent-dark); }
+
+        /* ---- Sort ---- */
+        .sort-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .sort-btn {
+            padding: 5px 12px;
+            border: 1.5px solid var(--border);
+            background: var(--card);
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: inherit;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sort-btn:hover { border-color: var(--accent); color: var(--text); }
+        .sort-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent-dark); }
+
+        /* ---- Task List ---- */
+        .task-list { list-style: none; }
 
         .task-item {
             display: flex;
-            align-items: center;
-            background: white;
-            padding: 12px 16px;
-            border-radius: 8px;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--card);
+            padding: 14px 16px;
+            border-radius: var(--radius);
             margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s;
+            animation: fadeSlideIn 0.35s ease both;
         }
 
-        .task-item span {
-            flex: 1;
-            font-size: 16px;
+        .task-item:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
         }
 
-        .task-item .delete-btn {
+        .task-item.completing {
+            animation: completeAnim 0.4s ease forwards;
+        }
+
+        .task-item.removing {
+            animation: removeAnim 0.3s ease forwards;
+        }
+
+        .task-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 1px;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+
+        .task-check:hover { border-color: var(--accent); }
+
+        .task-check.checked {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .task-check.checked::after {
+            content: '';
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) translateY(-1px);
+        }
+
+        .task-body { flex: 1; min-width: 0; }
+
+        .task-text {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.4;
+            transition: all 0.3s;
+            word-break: break-word;
+        }
+
+        .task-item.done .task-text {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .task-tag {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 12px;
+            letter-spacing: 0.2px;
+        }
+
+        .tag-personal { background: var(--accent-light); color: var(--accent-dark); }
+        .tag-work { background: var(--blue-light); color: var(--blue); }
+        .tag-school { background: var(--orange-light); color: var(--orange); }
+        .tag-health { background: var(--green-light); color: var(--green); }
+
+        .task-deadline {
+            font-size: 11px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .task-deadline.overdue { color: var(--danger); font-weight: 500; }
+        .task-deadline.today { color: var(--orange); font-weight: 500; }
+
+        .btn-delete {
             background: none;
             border: none;
-            color: #e74c3c;
-            font-size: 18px;
+            color: var(--text-light);
+            font-size: 16px;
             cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-top: 1px;
+            opacity: 0;
         }
 
-        .task-item .delete-btn:hover {
-            background: #fdecea;
-        }
+        .task-item:hover .btn-delete { opacity: 1; }
+        .btn-delete:hover { color: var(--danger); background: var(--danger-light); }
 
+        /* ---- Empty ---- */
         .empty-state {
             text-align: center;
-            color: #999;
-            padding: 40px 0;
-            font-size: 15px;
+            color: var(--text-light);
+            padding: 48px 0;
+            font-size: 14px;
+            animation: fadeSlideIn 0.4s ease;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        /* ---- Animations ---- */
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes completeAnim {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes removeAnim {
+            to { opacity: 0; transform: translateX(30px); height: 0; padding: 0; margin: 0; overflow: hidden; }
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 480px) {
+            .summary { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+            .summary-card { padding: 10px; }
+            .summary-card .num { font-size: 22px; }
+            .add-form .row { flex-wrap: wrap; }
+            .add-form select, .add-form input[type="date"] { min-width: calc(50% - 4px); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Todo List</h1>
-        <div class="input-row">
-            <input type="text" id="taskInput" placeholder="Add a new task..." autofocus>
-            <button onclick="addTask()">Add</button>
+    <div class="app">
+        <div class="header">
+            <h1>my todos</h1>
+            <div class="date-label" id="dateLabel"></div>
         </div>
+
+        <div class="summary" id="summary"></div>
+
+        <div class="add-form">
+            <div class="row">
+                <input type="text" id="taskInput" placeholder="what needs to be done?" autofocus>
+                <button class="btn-add" onclick="addTask()">add</button>
+            </div>
+            <div class="row">
+                <select id="categoryInput">
+                    <option value="">category</option>
+                    <option value="personal">personal</option>
+                    <option value="work">work</option>
+                    <option value="school">school</option>
+                    <option value="health">health</option>
+                </select>
+                <input type="date" id="deadlineInput">
+            </div>
+        </div>
+
+        <div class="tabs" id="tabs"></div>
+        <div class="cat-filters" id="catFilters"></div>
+        <div class="sort-row">
+            <button class="sort-btn" id="sortBtn" onclick="toggleSort()">sort by deadline</button>
+        </div>
+
         <ul class="task-list" id="taskList"></ul>
     </div>
 
     <script>
-        const STORAGE_KEY = 'todo-tasks';
-
+        const STORAGE_KEY = 'todo-tasks-v2';
         let tasks = loadTasks();
+        let currentView = 'all';
+        let currentCategory = 'all';
+        let sortByDeadline = false;
 
         function loadTasks() {
             try {
                 const data = localStorage.getItem(STORAGE_KEY);
                 return data ? JSON.parse(data) : [];
-            } catch {
-                return [];
-            }
+            } catch { return []; }
         }
 
         function saveTasks() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
         }
 
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function todayStr() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr + 'T00:00:00');
+            const today = new Date(); today.setHours(0,0,0,0);
+            const diff = Math.ceil((d - today) / 86400000);
+            if (diff === 0) return 'today';
+            if (diff === 1) return 'tomorrow';
+            if (diff === -1) return 'yesterday';
+            if (diff < -1) return `${Math.abs(diff)}d overdue`;
+            if (diff <= 7) return `in ${diff}d`;
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function deadlineClass(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr + 'T00:00:00');
+            const today = new Date(); today.setHours(0,0,0,0);
+            const diff = Math.ceil((d - today) / 86400000);
+            if (diff < 0) return 'overdue';
+            if (diff === 0) return 'today';
+            return '';
+        }
+
+        // ---- Date label ----
+        function renderDateLabel() {
+            const now = new Date();
+            document.getElementById('dateLabel').textContent =
+                now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        }
+
+        // ---- Summary ----
+        function renderSummary() {
+            const today = todayStr();
+            const todayTasks = tasks.filter(t => t.deadline === today);
+            const todayDone = todayTasks.filter(t => t.completed).length;
+            const pending = tasks.filter(t => !t.completed).length;
+
+            document.getElementById('summary').innerHTML = `
+                <div class="summary-card total">
+                    <div class="num">${pending}</div>
+                    <div class="label">pending</div>
+                </div>
+                <div class="summary-card done">
+                    <div class="num">${todayDone}/${todayTasks.length}</div>
+                    <div class="label">today</div>
+                </div>
+                <div class="summary-card due">
+                    <div class="num">${tasks.filter(t => !t.completed && t.deadline && t.deadline < today).length}</div>
+                    <div class="label">overdue</div>
+                </div>
+            `;
+        }
+
+        // ---- Tabs ----
+        function renderTabs() {
+            const views = ['all', 'active', 'completed'];
+            document.getElementById('tabs').innerHTML = views.map(v =>
+                `<button class="tab ${currentView === v ? 'active' : ''}" onclick="setView('${v}')">${v}</button>`
+            ).join('');
+        }
+
+        function setView(v) { currentView = v; renderTabs(); renderTasks(); }
+
+        // ---- Category filters ----
+        function renderCatFilters() {
+            const cats = ['all', ...new Set(tasks.map(t => t.category).filter(Boolean))];
+            document.getElementById('catFilters').innerHTML = cats.map(c =>
+                `<button class="cat-chip ${currentCategory === c ? 'active' : ''}" onclick="setCat('${c}')">${c}</button>`
+            ).join('');
+        }
+
+        function setCat(c) { currentCategory = c; renderCatFilters(); renderTasks(); }
+
+        // ---- Sort ----
+        function toggleSort() {
+            sortByDeadline = !sortByDeadline;
+            document.getElementById('sortBtn').classList.toggle('active', sortByDeadline);
+            renderTasks();
+        }
+
+        // ---- Add ----
         function addTask() {
             const input = document.getElementById('taskInput');
             const text = input.value.trim();
             if (!text) return;
 
-            tasks.push({ id: Date.now(), text, completed: false });
+            const category = document.getElementById('categoryInput').value;
+            const deadline = document.getElementById('deadlineInput').value;
+
+            tasks.push({ id: Date.now(), text, completed: false, category, deadline });
             input.value = '';
+            document.getElementById('categoryInput').value = '';
+            document.getElementById('deadlineInput').value = '';
             input.focus();
             saveTasks();
-            renderTasks();
+            renderAll();
+        }
+
+        // ---- Toggle / Delete ----
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            const el = document.querySelector(`[data-id="${id}"]`);
+            if (el && !task.completed) el.classList.add('completing');
+            setTimeout(() => {
+                task.completed = !task.completed;
+                saveTasks();
+                renderAll();
+            }, task.completed ? 0 : 300);
         }
 
         function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveTasks();
-            renderTasks();
+            const el = document.querySelector(`[data-id="${id}"]`);
+            if (el) {
+                el.classList.add('removing');
+                setTimeout(() => {
+                    tasks = tasks.filter(t => t.id !== id);
+                    saveTasks();
+                    renderAll();
+                }, 300);
+            } else {
+                tasks = tasks.filter(t => t.id !== id);
+                saveTasks();
+                renderAll();
+            }
         }
 
+        // ---- Render tasks ----
         function renderTasks() {
+            let filtered = [...tasks];
+
+            if (currentView === 'active') filtered = filtered.filter(t => !t.completed);
+            if (currentView === 'completed') filtered = filtered.filter(t => t.completed);
+            if (currentCategory !== 'all') filtered = filtered.filter(t => t.category === currentCategory);
+
+            if (sortByDeadline) {
+                filtered.sort((a, b) => {
+                    if (!a.deadline && !b.deadline) return 0;
+                    if (!a.deadline) return 1;
+                    if (!b.deadline) return -1;
+                    return a.deadline.localeCompare(b.deadline);
+                });
+            }
+
             const list = document.getElementById('taskList');
 
-            if (tasks.length === 0) {
-                list.innerHTML = '<div class="empty-state">No tasks yet. Add one above!</div>';
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">~</div>
+                        ${currentView === 'completed' ? 'no completed tasks yet' : 'nothing here, enjoy the calm'}
+                    </div>`;
                 return;
             }
 
-            list.innerHTML = tasks.map(task => `
-                <li class="task-item">
-                    <span>${escapeHtml(task.text)}</span>
-                    <button class="delete-btn" onclick="deleteTask(${task.id})" title="Delete">✕</button>
+            list.innerHTML = filtered.map((task, i) => `
+                <li class="task-item ${task.completed ? 'done' : ''}" data-id="${task.id}" style="animation-delay: ${i * 0.04}s">
+                    <div class="task-check ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+                    <div class="task-body">
+                        <div class="task-text">${escapeHtml(task.text)}</div>
+                        <div class="task-meta">
+                            ${task.category ? `<span class="task-tag tag-${task.category}">${task.category}</span>` : ''}
+                            ${task.deadline ? `<span class="task-deadline ${deadlineClass(task.deadline)}">${formatDate(task.deadline)}</span>` : ''}
+                        </div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(${task.id})">&#10005;</button>
                 </li>
             `).join('');
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function renderAll() {
+            renderSummary();
+            renderTabs();
+            renderCatFilters();
+            renderTasks();
         }
 
         document.getElementById('taskInput').addEventListener('keydown', e => {
             if (e.key === 'Enter') addTask();
         });
 
-        renderTasks();
+        renderDateLabel();
+        renderAll();
     </script>
 </body>
 </html>
