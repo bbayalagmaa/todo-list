@@ -121,7 +121,22 @@
     </div>
 
     <script>
-        let tasks = [];
+        const STORAGE_KEY = 'todo-tasks';
+
+        let tasks = loadTasks();
+
+        function loadTasks() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
 
         function addTask() {
             const input = document.getElementById('taskInput');
@@ -131,11 +146,13 @@
             tasks.push({ id: Date.now(), text, completed: false });
             input.value = '';
             input.focus();
+            saveTasks();
             renderTasks();
         }
 
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
             renderTasks();
         }
 
